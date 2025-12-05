@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автосалон - Продажа автомобилей</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .filters {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .filter-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #1a237e;
+            font-weight: 600;
+        }
+
+        .brands-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .brand-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #444;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .brand-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .brand-btn.active {
+            background: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .car-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 3px solid #1a237e;
+        }
+
+        .car-info {
+            padding: 25px;
+        }
+
+        .car-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 10px;
+        }
+
+        .car-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .car-price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2e7d32;
+            margin: 20px 0;
+        }
+
+        .no-cars {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            grid-column: 1 / -1;
+        }
+
+        .no-cars h3 {
+            font-size: 1.8rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .cars-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+                .search-box input:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+
+        .advanced-filters input:focus,
+        .advanced-filters select:focus {
+            outline: none;
+            border-color: #1a237e;
+        }
+
+        .quick-brands {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+                /* Стили для полей ввода */
+        .advanced-filters input[type="number"],
+        .advanced-filters input[type="text"],
+        .advanced-filters select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        .advanced-filters input[type="number"]:focus,
+        .advanced-filters input[type="text"]:focus,
+        .advanced-filters select:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+
+        /* Стили для лейблов */
+        .advanced-filters label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        /* Выравнивание двух полей в одной строке */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Отступы между блоками фильтров */
+        .filter-group {
+            margin-bottom: 20px;
+        }
+                @media (max-width: 768px) {
+            /* Стили для мобильных устройств */
+            .advanced-filters {
+                padding: 15px !important;
+            }
+
+            /* Для двухколоночных блоков - делаем одну колонку */
+            .two-columns {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            /* Уменьшаем отступы в полях ввода */
+            .advanced-filters input[type="number"],
+            .advanced-filters input[type="text"],
+            .advanced-filters select {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+
+            /* Адаптация сетки автомобилей */
+            .cars-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            /* Адаптация заголовка */
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            /* Быстрые фильтры - перенос на новую строку */
+            .brands-filter {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>🚗 Автосалон Premium Cars</h1>
+                    <p class="tagline">Лучшие автомобили по лучшим ценам</p>
+                </div>
+                <div>
+                    <p style="font-size: 1.2rem; font-weight: 600;">
+                        {% if search_query or brand_filter or min_price or max_price or min_year or max_year or transmission_filter or fuel_filter %}
+                            🔍 Найдено {{ total_cars }} автомобилей
+                        {% else %}
+                            🏁 {{ total_cars }} автомобилей в наличии
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+                <section class="filters">
+            <!-- ПОИСК ПО ТЕКСТУ -->
+            <div class="search-box" style="margin-bottom: 25px;">
+                <form method="get" action="{% url 'cars:home' %}" style="display: flex; gap: 10px;">
+                    <input type="text"
+                           name="search"
+                           value="{{ search_query }}"
+                           placeholder="🔍 Поиск по модели, марке или описанию..."
+                           style="flex: 1; padding: 12px 20px; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 1rem;">
+                    <button type="submit"
+                            style="padding: 12px 30px; background: #1a237e; color: white; border: none; border-radius: 25px; font-weight: 600; cursor: pointer;">
+                        Найти
+                    </button>
+                    {% if search_query %}
+                        <a href="{% url 'cars:home' %}"
+                           style="padding: 12px 20px; background: #f0f0f0; color: #333; border-radius: 25px; text-decoration: none; font-weight: 500; display: flex; align-items: center;">
+                            Сбросить
+                        </a>
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- РАСШИРЕННЫЕ ФИЛЬТРЫ -->
+            <div class="advanced-filters" style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; color: #1a237e;">🔎 Расширенный поиск</h3>
+
+                <form method="get" action="{% url 'cars:home' %}">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+
+                        <!-- ФИЛЬТР ПО МАРКЕ -->
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #555;">Марка</label>
+                            <select name="brand" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem;">
+                                <option value="">Все марки</option>
+                                {% for brand in brands %}
+                                    <option value="{{ brand.id }}" {% if brand_filter == brand.id|stringformat:'i' %}selected{% endif %}>
+                                        {{ brand.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- ФИЛЬТР ПО ЦЕНЕ -->
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #555;">Цена, ₽</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="number" name="min_price" value="{{ min_price }}"
+                                       placeholder="От" style="flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <input type="number" name="max_price" value="{{ max_price }}"
+                                       placeholder="До" style="flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <!-- ФИЛЬТР ПО ГОДУ -->
+                        <div style="margin-bottom: 15px;"> <!-- ← ДОБАВЬТЕ ЭТОТ СТИЛЬ -->
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #555;">
+                                 📅 Год выпуска
+                            </label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div>
+                                    <input type="number" name="min_year" value="{{ min_year }}"
+                                        placeholder="От 1900" min="1900" max="2030"
+                                        style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                </div>
+                                <div>
+                                    <input type="number" name="max_year" value="{{ max_year }}"
+                                        placeholder="До 2030" min="1900" max="2030"
+                                        style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ФИЛЬТР ПО КОРОБКЕ ПЕРЕДАЧ -->
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #555;">Коробка передач</label>
+                            <select name="transmission" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem;">
+                                <option value="">Любая</option>
+                                {% for value, label in TRANSMISSION_CHOICES %}
+                                    <option value="{{ value }}" {% if transmission_filter == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- ФИЛЬТР ПО ТИПУ ТОПЛИВА -->
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #555;">Тип топлива</label>
+                            <select name="fuel" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem;">
+                                <option value="">Любой</option>
+                                {% for value, label in FUEL_CHOICES %}
+                                    <option value="{{ value }}" {% if fuel_filter == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- КНОПКИ ФОРМЫ -->
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="submit"
+                                style="padding: 12px 25px; background: #1a237e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">
+                            🔍 Применить фильтры
+                        </button>
+                        <a href="{% url 'cars:home' %}"
+                           style="padding: 12px 25px; background: #f0f0f0; color: #333; border-radius: 8px; text-decoration: none; font-weight: 500; display: flex; align-items: center; justify-content: center;">
+                            🗑️ Сбросить все
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- БЫСТРЫЕ ФИЛЬТРЫ ПО МАРКАМ -->
+            <div class="quick-brands">
+                <h3 style="margin-bottom: 15px; color: #1a237e;">🚗 Быстрый выбор по марке</h3>
+                <div class="brands-filter">
+                    <a href="{% url 'cars:home' %}" class="brand-btn {% if not brand_filter and not search_query and not min_price and not max_price and not min_year and not max_year and not transmission_filter and not fuel_filter %}active{% endif %}">
+                        Все автомобили
+                    </a>
+                    {% for brand in brands|slice:":8" %}
+                        <a href="?brand={{ brand.id }}"
+                           class="brand-btn {% if brand_filter == brand.id|stringformat:'i' %}active{% endif %}">
+                            {{ brand.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+                <section class="cars-grid">
+            {% if cars %}
+                {% for car in cars %}
+                    <a href="{% url 'cars:car_detail' car.id %}" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="car-card">
+                            {% if car.images.all %}
+                                {% for image in car.images.all %}
+                                    {% if image.is_main %}
+                                        <img src="{{ image.image.url }}" alt="{{ car.brand.name }} {{ car.model }}" class="car-image">
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <img src="https://via.placeholder.com/400x220/cccccc/969696?text=Фото+скоро+будет"
+                                     alt="Нет фото" class="car-image">
+                            {% endif %}
+
+                            <div class="car-info">
+                                <h2 class="car-title">{{ car.brand.name }} {{ car.model }}</h2>
+
+                                <div class="car-details">
+                                    <div class="detail-item">📅 {{ car.year }} год</div>
+                                    <div class="detail-item">🎨 {{ car.color }}</div>
+                                    <div class="detail-item">⚙️
+                                        {% if car.transmission == 'manual' %}МКПП
+                                        {% elif car.transmission == 'automatic' %}АКПП
+                                        {% elif car.transmission == 'robot' %}Робот
+                                        {% else %}Вариатор{% endif %}
+                                    </div>
+                                    <div class="detail-item">⛽
+                                        {% if car.fuel_type == 'petrol' %}Бензин
+                                        {% elif car.fuel_type == 'diesel' %}Дизель
+                                        {% elif car.fuel_type == 'electric' %}Электрический
+                                        {% else %}Гибрид{% endif %}
+                                    </div>
+                                    <div class="detail-item">🐎 {{ car.horsepower }} л.с.</div>
+                                    <div class="detail-item">📏 {{ car.engine_volume }} л</div>
+                                    <div class="detail-item">🛣️ {{ car.mileage|floatformat:0 }} км</div>
+                                </div>
+
+                                <div class="car-price">{{ car.price|floatformat:0 }} ₽</div>
+
+                                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                                    <small style="color: #666;">Добавлен: {{ car.created_at|date:"d.m.Y" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="no-cars">
+                    <h3>🚫 Автомобилей не найдено</h3>
+                    <p>Попробуйте выбрать другую марку или зайдите позже</p>
+                </div>
+            {% endif %}
+        </section>
+                  <!-- ПАГИНАЦИЯ -->
+        {% if paginator.num_pages > 1 %}
+            <div style="margin-top: 40px; text-align: center;">
+                <div style="display: inline-flex; gap: 5px; background: white; padding: 10px; border-radius: 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1"
+                           style="padding: 10px 15px; background: #f0f0f0; border-radius: 50%; text-decoration: none; color: #333;">««</a>
+                        <a href="?page={{ page_obj.previous_page_number }}"
+                           style="padding: 10px 15px; background: #f0f0f0; border-radius: 50%; text-decoration: none; color: #333;">«</a>
+                    {% endif %}
+
+                    {% for num in paginator.page_range %}
+                        {% if num == page_obj.number %}
+                            <span style="padding: 10px 15px; background: #1a237e; color: white; border-radius: 50%; font-weight: 600;">
+                                {{ num }}
+                            </span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}"
+                               style="padding: 10px 15px; background: #f0f0f0; border-radius: 50%; text-decoration: none; color: #333;">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}"
+                           style="padding: 10px 15px; background: #f0f0f0; border-radius: 50%; text-decoration: none; color: #333;">»</a>
+                        <a href="?page={{ paginator.num_pages }}"
+                           style="padding: 10px 15px; background: #f0f0f0; border-radius: 50%; text-decoration: none; color: #333;">»»</a>
+                    {% endif %}
+                </div>
+                <p style="margin-top: 10px; color: #666; font-size: 0.9rem;">
+                    Страница {{ page_obj.number }} из {{ paginator.num_pages }}
+                </p>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Автосалон Premium Cars. Все права защищены.</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                📞 Телефон: +7 (999) 123-45-67 | 📧 Email: info@premiumcars.ru
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
