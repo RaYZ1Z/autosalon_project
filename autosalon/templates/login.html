@@ -1,0 +1,63 @@
+{% extends "vue_main_base.html" %}
+
+{% block title %}Вход | AutoElite{% endblock %}
+
+{% block vue_content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="glass-effect p-5 rounded-4 fade-in bounce-in card-hover">
+                <h1 class="text-primary text-center mb-4 gradient-text">
+                    <i class="fas fa-sign-in-alt me-2"></i> Вход в систему
+                </h1>
+
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" 
+                               placeholder="test@example.com" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="password" 
+                               placeholder="Введите пароль" required>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">Запомнить меня</label>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary w-100 mb-3 glow-animation" onclick="demoLogin()">
+                        <i class="fas fa-sign-in-alt me-2"></i> Демо-вход
+                    </button>
+                    
+                    <div class="text-center">
+                        <a href="#" class="text-decoration-none">Забыли пароль?</a>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="text-muted">Нет аккаунта?</p>
+                    <a href="/register/" class="btn btn-outline-primary">
+                        <i class="fas fa-user-plus me-2"></i> Зарегистрироваться
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function demoLogin() {
+    const email = document.getElementById('email').value || 'demo@autoelite.ru';
+    const password = document.getElementById('password').value || 'demo123';
+
+    // Перенаправляем в личный кабинет
+    window.location.href = '/accounts/profile/';
+}
+</script>
+{% endblock %}

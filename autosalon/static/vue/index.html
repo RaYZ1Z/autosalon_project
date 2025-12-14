@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue-router@4"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Vue тест без npm</h1>
+        <p>{{ message }}</p>
+    </div>
+
+    <script>
+    const { createApp } = Vue;
+
+    const app = createApp({
+        data() {
+            return {
+                message: 'Vue работает!'
+            }
+        }
+    });
+
+    app.mount('#app');
+    </script>
+</body>
+</html>

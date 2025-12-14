@@ -1,469 +1,684 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ car.brand.name }} {{ car.model }} - Автосалон Premium Cars</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+{% extends 'vue_main_base.html' %}
+{% load humanize %}
 
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-        }
+{% block title %}{{ car.brand }} {{ car.model }} - AutoElite{% endblock %}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+{% block extra_css %}
+<style>
+.car-detail-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
 
-        .header {
-            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
-            color: white;
-            padding: 25px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+.car-detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    margin-top: 30px;
+}
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.car-gallery-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
 
-        .back-link {
-            color: white;
-            text-decoration: none;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
+.car-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
 
-        .back-link:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateX(-5px);
-        }
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-        .car-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 10px 0 5px 0;
-        }
+.carousel-control-prev {
+    left: 20px;
+}
 
-        .car-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
+.carousel-control-next {
+    right: 20px;
+}
 
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 40px;
-            margin-top: 30px;
-        }
+.carousel-indicators {
+    bottom: 20px;
+}
 
-        .gallery {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
+.carousel-indicators button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: none;
+    margin: 0 4px;
+}
 
-        .main-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
+.carousel-indicators .active {
+    background-color: #fbbf24;
+}
 
-        .thumbnails {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 10px 0;
-        }
+.car-info-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
 
-        .thumbnail {
-            width: 100px;
-            height: 75px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-        }
+.car-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 30px;
+    text-align: center;
+}
 
-        .thumbnail:hover,
-        .thumbnail.active {
-            border-color: #1a237e;
-            transform: scale(1.05);
-        }
+.specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
 
-        .details-card {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
+.spec-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
 
-        .price {
-            font-size: 2.8rem;
-            font-weight: 800;
-            color: #2e7d32;
-            margin-bottom: 30px;
-            text-align: center;
-        }
+.spec-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
 
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin: 25px 0;
-        }
+.spec-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
 
-        .detail-item {
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #1a237e;
-        }
+.spec-icon {
+    background: rgba(107, 114, 128, 0.2);
+    color: #6b7280;
+}
 
-        .detail-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 5px;
-        }
+.spec-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 5px;
+}
 
-        .detail-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1a237e;
-        }
+.spec-label {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
 
-        .contact-button {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 30px;
-            text-decoration: none;
-            text-align: center;
-        }
+.spec-text {
+    display: flex;
+    flex-direction: column;
+}
 
-        .contact-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.2);
-        }
+.car-description {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 30px;
+}
 
-        .similar-cars {
-            margin-top: 60px;
-        }
+.description-title {
+    color: #fbbf24;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-        .section-title {
-            font-size: 1.8rem;
-            color: #1a237e;
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #1a237e;
-        }
+.description-content {
+    color: #cbd5e1;
+    line-height: 1.6;
+    font-size: 1rem;
+}
 
-        .similar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
+.car-actions-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
+}
 
-        .similar-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
+.actions-title {
+    color: #fbbf24;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
 
-        .similar-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-        }
+.btn-favorite {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 2px solid #ef4444;
+    padding: 15px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 10px;
+    backdrop-filter: blur(10px);
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .similar-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
+.btn-favorite:hover {
+    background: #ef4444;
+    color: white;
+    transform: translateY(-2px);
+}
 
-        .similar-info {
-            padding: 20px;
-        }
+.btn-favorite.active {
+    background: #ef4444;
+    color: white;
+}
 
-        .similar-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1a237e;
-            margin-bottom: 10px;
-        }
+.btn-request {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 15px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .similar-price {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #2e7d32;
-            margin: 10px 0;
-        }
+.btn-request:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
 
-        .similar-link {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border-radius: 25px;
-            color: #333;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+.btn-login, .btn-signup {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
 
-        .similar-link:hover {
-            background: #1a237e;
-            color: white;
-        }
+.btn-login:hover, .btn-signup:hover {
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-2px);
+}
 
-        footer {
-            text-align: center;
-            margin-top: 60px;
-            padding: 30px;
-            color: #666;
-            border-top: 1px solid #e0e0e0;
-        }
+.btn-back {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
 
-        @media (max-width: 992px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
 
-            .details-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+.similar-cars-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
 
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
+.similar-title {
+    color: #fbbf24;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
 
-            .similar-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="{% url 'cars:home' %}" class="back-link">
-                    ← Назад к каталогу
-                </a>
-                <div>
-                    <h1 class="car-title">{{ car.brand.name }} {{ car.model }}</h1>
-                    <p class="car-subtitle">{{ car.year }} год • {{ car.color }} • {{ car.mileage|floatformat:0 }} км</p>
-                </div>
-            </div>
-        </div>
-    </header>
+.similar-car-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
 
-    <main class="container">
-        <div class="main-content">
-            <!-- Галерея фотографий -->
-            <section class="gallery">
-                {% if images %}
-                    {% with main_image=images.first %}
-                        <img id="mainImage" src="{{ main_image.image.url }}"
-                             alt="{{ car.brand.name }} {{ car.model }}" class="main-image">
-                    {% endwith %}
+.similar-car-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+    border-radius: 10px;
+}
 
-                    <div class="thumbnails">
-                        {% for image in images %}
-                            <img src="{{ image.image.url }}"
-                                 alt="Фото {{ forloop.counter }}"
-                                 class="thumbnail {% if forloop.first %}active{% endif %}"
-                                 onclick="changeImage('{{ image.image.url }}', this)">
+.similar-car-image {
+    width: 70px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.similar-car-image i {
+    color: #64748b;
+    font-size: 1.2rem;
+}
+
+.similar-car-info {
+    flex: 1;
+}
+
+.similar-car-title {
+    font-weight: 600;
+    color: #f8fafc;
+    margin-bottom: 3px;
+    font-size: 0.95rem;
+}
+
+.similar-car-price {
+    color: #10b981;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.similar-car-details {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.similar-car-arrow {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 992px) {
+    .car-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .car-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .car-detail-container {
+        padding: 20px 15px;
+    }
+
+    .specs-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .car-image {
+        height: 300px;
+    }
+
+    .car-title {
+        font-size: 1.8rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block vue_content %}
+<div class="car-detail-container">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/vue-cars/" style="color: #fbbf24;">Главная</a></li>
+            <li class="breadcrumb-item active" aria-current="page" style="color: #cbd5e1;">{{ car.brand }} {{ car.model }}</li>
+        </ol>
+    </nav>
+
+    <div class="car-detail-grid">
+        <div>
+            <!-- Галерея изображений -->
+            {% load static %}
+            <div class="car-gallery-card">
+                <div id="carCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% if car.images %}
+                            {% for image in car.images %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.url }}" class="d-block w-100 car-image" alt="Фото автомобиля {{ car.brand }} {{ car.model }}">
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Placeholder: показываем заглушку, если нет фотографий -->
+                            <div class="carousel-item active">
+                                <div class="d-block w-100 car-image d-flex align-items-center justify-content-center bg-light">
+                                    <div class="text-center text-muted">
+                                        <i class="fas fa-car fa-4x mb-3"></i>
+                                        <h5>Фото автомобиля</h5>
+                                        <p>Фотографии временно недоступны</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if car.images|length > 1 or not car.images %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Предыдущее фото</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Следующее фото</span>
+                    </button>
+                    {% endif %}
+
+                    <!-- Индикаторы -->
+                    {% if car.images|length > 1 %}
+                    <div class="carousel-indicators">
+                        {% for image in car.images %}
+                        <button type="button" data-bs-target="#carCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %} aria-label="Фото {{ forloop.counter }}"></button>
                         {% endfor %}
                     </div>
-                {% else %}
-                    <img src="https://via.placeholder.com/800x400/cccccc/969696?text=Фото+скоро+будет"
-                         alt="Нет фото" class="main-image">
-                {% endif %}
-            </section>
+                    {% endif %}
+                </div>
+            </div>
 
-            <!-- Информация и контакты -->
-            <section class="details-card">
-                <div class="price">{{ car.price|floatformat:0 }} ₽</div>
+            <!-- Основная информация -->
+            <div class="car-info-card">
+                <h1 class="car-title">{{ car.brand }} {{ car.model }}</h1>
 
-                <div class="details-grid">
-                    <div class="detail-item">
-                        <div class="detail-label">Марка</div>
-                        <div class="detail-value">{{ car.brand.name }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Модель</div>
-                        <div class="detail-value">{{ car.model }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Год выпуска</div>
-                        <div class="detail-value">{{ car.year }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Цвет</div>
-                        <div class="detail-value">{{ car.color }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Пробег</div>
-                        <div class="detail-value">{{ car.mileage|floatformat:0 }} км</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Коробка передач</div>
-                        <div class="detail-value">{{ transmission_display }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Тип топлива</div>
-                        <div class="detail-value">{{ fuel_display }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Объем двигателя</div>
-                        <div class="detail-value">{{ car.engine_volume }} л</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Мощность</div>
-                        <div class="detail-value">{{ car.horsepower }} л.с.</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Статус</div>
-                        <div class="detail-value">
-                            {% if car.is_sold %}
-                                <span style="color: #f44336;">Продан</span>
-                            {% else %}
-                                <span style="color: #4caf50;">В наличии</span>
-                            {% endif %}
+                <div class="specs-grid">
+                    <div class="spec-card spec-price">
+                        <div class="spec-icon">
+                            <i class="fas fa-ruble-sign"></i>
+                        </div>
+                        <div class="spec-text">
+                            <div class="spec-value">{{ car.price|floatformat:0|intcomma }} ₽</div>
+                            <div class="spec-label">Цена</div>
                         </div>
                     </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Добавлен</div>
-                        <div class="detail-value">{{ car.created_at|date:"d.m.Y" }}</div>
+                    <div class="spec-card spec-year">
+                        <div class="spec-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="spec-value">{{ car.year }} год</div>
+                        <div class="spec-label">Год выпуска</div>
+                    </div>
+                    <div class="spec-card spec-mileage">
+                        <div class="spec-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="spec-value">{{ car.mileage|floatformat:0|intcomma }} км</div>
+                        <div class="spec-label">Пробег</div>
+                    </div>
+                    <div class="spec-card spec-color">
+                        <div class="spec-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="spec-value">{{ car.color }}</div>
+                        <div class="spec-label">Цвет</div>
+                    </div>
+                    <div class="spec-card spec-transmission">
+                        <div class="spec-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="spec-value">{{ car.transmission }}</div>
+                        <div class="spec-label">Коробка передач</div>
+                    </div>
+                    <div class="spec-card spec-fuel">
+                        <div class="spec-icon">
+                            <i class="fas fa-gas-pump"></i>
+                        </div>
+                        <div class="spec-value">{{ car.fuel_type }}</div>
+                        <div class="spec-label">Тип топлива</div>
                     </div>
                 </div>
 
-                {% if not car.is_sold %}
-                    <a href="tel:+79991234567" class="contact-button">
-                        📞 Забронировать авто
-                    </a>
-                    <a href="https://wa.me/79991234567?text=Здравствуйте!%20Меня%20интересует%20{{ car.brand.name|urlencode }}%20{{ car.model|urlencode }}%20({{ car.year }})"
-                       target="_blank" class="contact-button" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); margin-top: 15px;">
-                        💬 Написать в WhatsApp
-                    </a>
-                {% else %}
-                    <button class="contact-button" style="background: #9e9e9e; cursor: not-allowed;" disabled>
-                        Автомобиль продан
-                    </button>
-                {% endif %}
-            </section>
-        </div>
-
-        <!-- Похожие автомобили -->
-        {% if similar_cars %}
-            <section class="similar-cars">
-                <h2 class="section-title">Похожие автомобили</h2>
-                <div class="similar-grid">
-                    {% for similar in similar_cars %}
-                        <div class="similar-card">
-                            {% if similar.images.all %}
-                                {% for image in similar.images.all %}
-                                    {% if image.is_main %}
-                                        <img src="{{ image.image.url }}"
-                                             alt="{{ similar.brand.name }} {{ similar.model }}"
-                                             class="similar-image">
-                                    {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                <img src="https://via.placeholder.com/400x180/cccccc/969696?text=Нет+фото"
-                                     alt="Нет фото" class="similar-image">
-                            {% endif %}
-                            <div class="similar-info">
-                                <h3 class="similar-title">{{ similar.brand.name }} {{ similar.model }}</h3>
-                                <p>{{ similar.year }} год • {{ similar.color }} • {{ similar.mileage|floatformat:0 }} км</p>
-                                <div class="similar-price">{{ similar.price|floatformat:0 }} ₽</div>
-                                <a href="{% url 'cars:car_detail' similar.id %}" class="similar-link">
-                                    Подробнее →
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
+                {% if car.description %}
+                <div class="car-description">
+                    <div class="description-title">
+                        <i class="fas fa-info-circle"></i>
+                        Описание
+                    </div>
+                    <div class="description-content">{{ car.description|linebreaks }}</div>
                 </div>
-            </section>
-        {% endif %}
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>© 2024 Автосалон Premium Cars. Все права защищены.</p>
-            <p style="margin-top: 10px; font-size: 0.9rem;">
-                📞 Телефон: +7 (999) 123-45-67 | 📧 Email: info@premiumcars.ru<br>
-                🏢 Адрес: г. Москва, ул. Автомобильная, д. 1
-            </p>
+                {% endif %}
+            </div>
         </div>
-    </footer>
 
-    <script>
-        // Функция для смены главного изображения
-        function changeImage(imageUrl, clickedThumbnail) {
-            // Меняем главное изображение
-            document.getElementById('mainImage').src = imageUrl;
+        <div>
+            <!-- Действия -->
+            <div class="car-actions-card">
+                <div class="actions-title">
+                    <i class="fas fa-shopping-cart me-2"></i>Действия
+                </div>
 
-            // Убираем активный класс у всех миниатюр
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
-            });
+                {% if user.is_authenticated %}
+                <a href="{% url 'cars:create_purchase_request' car.id %}" class="btn-request">
+                    <i class="fas fa-credit-card me-2"></i>Оформить заявку
+                </a>
 
-            // Добавляем активный класс к нажатой миниатюре
-            clickedThumbnail.classList.add('active');
-        }
+                <!-- Кнопка избранного -->
+                <button id="favorite-btn" class="btn-favorite {% if is_favorite %}active{% endif %}" onclick="toggleFavorite({{ car.id }})">
+                    <i id="favorite-icon" class="fas fa-heart me-2"></i>
+                    <span id="favorite-text">{% if is_favorite %}Удалить из избранного{% else %}Добавить в избранное{% endif %}</span>
+                </button>
+                {% else %}
+                <div class="alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Войдите в аккаунт</strong><br>
+                    <small>Чтобы оформить заявку на покупку</small>
+                </div>
+                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Войти
+                </a>
+                <a href="{% url 'accounts:signup' %}" class="btn-signup">
+                    <i class="fas fa-user-plus me-2"></i>Регистрация
+                </a>
+                {% endif %}
 
-        // Автоматическая смена изображений каждые 5 секунд
-        let currentImageIndex = 0;
-        const thumbnails = document.querySelectorAll('.thumbnail');
+                <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 20px 0;">
 
-        function autoChangeImage() {
-            if (thumbnails.length > 1) {
-                currentImageIndex = (currentImageIndex + 1) % thumbnails.length;
-                const thumbnail = thumbnails[currentImageIndex];
-                changeImage(thumbnail.src, thumbnail);
+                <a href="/vue-cars/" class="btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>К списку автомобилей
+                </a>
+            </div>
+
+            <!-- Похожие автомобили -->
+            {% if similar_cars %}
+            <div class="similar-cars-card">
+                <div class="similar-title">
+                    <i class="fas fa-car me-2"></i>Похожие автомобили
+                </div>
+                {% for similar_car in similar_cars %}
+                <a href="{% url 'cars:car_detail' similar_car.id %}" class="similar-car-item">
+                    {% if similar_car.images.first %}
+                    <img src="{{ similar_car.images.first.image.url }}" alt="{{ similar_car.brand.name }} {{ similar_car.model }}" class="similar-car-image">
+                    {% else %}
+                    <div class="similar-car-image">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    {% endif %}
+                    <div class="similar-car-info">
+                        <div class="similar-car-title">{{ similar_car.brand.name }} {{ similar_car.model }}</div>
+                        <div class="similar-car-price">{{ similar_car.price|floatformat:0|intcomma }} ₽</div>
+                        <div class="similar-car-details">{{ similar_car.year }} г., {{ similar_car.mileage|floatformat:0|intcomma }} км</div>
+                    </div>
+                    <i class="fas fa-chevron-right similar-car-arrow"></i>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Функция для обновления состояния кнопки избранного
+function updateFavoriteButton(isFavorite) {
+    const btn = document.getElementById('favorite-btn');
+    const icon = document.getElementById('favorite-icon');
+    const text = document.getElementById('favorite-text');
+
+    if (isFavorite) {
+        btn.className = 'btn-favorite active';
+        icon.className = 'fas fa-heart me-2';
+        text.textContent = 'Удалить из избранного';
+    } else {
+        btn.className = 'btn-favorite';
+        icon.className = 'fas fa-heart me-2';
+        text.textContent = 'Добавить в избранное';
+    }
+}
+
+// Функция для проверки состояния избранного
+async function checkFavoriteStatus(carId) {
+    try {
+        const response = await fetch(`/api/favorites/${carId}/check/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
-        }
+        });
 
-        // Запускаем автоматическую смену, если есть больше 1 фото
-        if (thumbnails.length > 1) {
-            setInterval(autoChangeImage, 5000);
+        if (response.ok) {
+            const data = await response.json();
+            updateFavoriteButton(data.is_favorite);
+        } else {
+            console.error('Ошибка ответа API:', response.status, response.statusText);
         }
-    </script>
-</body>
-</html>
+    } catch (error) {
+        console.error('Ошибка проверки статуса избранного:', error);
+    }
+}
+
+async function toggleFavorite(carId) {
+    try {
+        const response = await fetch('/api/favorites/toggle/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            },
+            body: JSON.stringify({ car_id: carId })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const isFavorite = data.action === 'added';
+            updateFavoriteButton(isFavorite);
+
+            // Сохраняем состояние в localStorage для синхронизации с каталогом
+            const favorites = JSON.parse(localStorage.getItem('autoelite_favorites_sync') || '[]');
+            if (isFavorite) {
+                if (!favorites.includes(carId)) {
+                    favorites.push(carId);
+                }
+            } else {
+                const index = favorites.indexOf(carId);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                }
+            }
+            localStorage.setItem('autoelite_favorites_sync', JSON.stringify(favorites));
+
+            alert(isFavorite ? 'Добавлено в избранное' : 'Удалено из избранного');
+        } else if (response.status === 401) {
+            alert('Необходимо войти в систему');
+        } else {
+            alert('Ошибка при работе с избранным');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка при работе с избранным');
+    }
+}
+
+// Проверяем статус избранного при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    const carId = {{ car.id }};
+    checkFavoriteStatus(carId);
+});
+</script>
+{% endblock %}

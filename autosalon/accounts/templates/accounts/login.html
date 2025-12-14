@@ -1,0 +1,89 @@
+{% extends 'vue_main_base.html' %}
+
+{% block title %}Вход в аккаунт | AutoElite{% endblock %}
+
+{% block vue_content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="glass-effect p-4 rounded-4 fade-in slide-up card-hover">
+                <div class="text-center mb-4">
+                    <h2 class="gradient-text mb-0">
+                        <i class="fas fa-sign-in-alt me-2"></i>Вход в аккаунт
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="loginForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}">
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            <p class="mb-0">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="fas fa-user me-1"></i>{{ form.username.label }}
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <div class="text-danger small">
+                                {{ form.username.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-1"></i>{{ form.password.label }}
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                            <div class="text-danger small">
+                                {{ form.password.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary-main btn-lg glow-animation">
+                                <i class="fas fa-sign-in-alt me-2"></i>Войти в аккаунт
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-2">Нет аккаунта?</p>
+                        <a href="{% url 'accounts:signup' %}" class="btn btn-outline-main">
+                            <i class="fas fa-user-plus me-1"></i>Зарегистрироваться
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a href="/vue-cars/" class="text-muted">
+                            <i class="fas fa-arrow-left me-1"></i>Вернуться на главную
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Добавляем Bootstrap классы к полям формы
+document.addEventListener('DOMContentLoaded', function() {
+    // Находим все input поля в форме
+    const inputs = document.querySelectorAll('#loginForm input');
+    inputs.forEach(input => {
+        input.classList.add('form-control');
+    });
+});
+</script>
+{% endblock %}

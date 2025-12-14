@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}AutoElite{% endblock %}</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .menu { background: #333; color: white; padding: 10px; margin-bottom: 20px; }
+        .menu a { color: white; margin: 0 10px; text-decoration: none; }
+        .form-field { margin: 15px 0; }
+        .form-field label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-field input, .form-field textarea {
+            width: 100%; max-width: 500px; padding: 8px;
+            border: 1px solid #ddd; border-radius: 4px;
+        }
+        .error { color: red; font-size: 0.9em; margin-top: 5px; }
+        .messages { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .btn {
+            padding: 10px 20px; background: #4CAF50;
+            color: white; border: none; cursor: pointer;
+            text-decoration: none; display: inline-block;
+        }
+        .btn-secondary { background: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        {% if user.is_authenticated %}
+            Привет, {{ user.username }}!
+            <a href="{% url 'accounts:profile' %}">Профиль</a>
+            <a href="{% url 'cars:purchase_request_list' %}">Мои заявки</a>
+            <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: white; cursor: pointer;">Выйти</button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">Войти</a>
+            <a href="{% url 'accounts:signup' %}">Регистрация</a>
+        {% endif %}
+        <a href="/">Главная</a>
+    </div>
+
+
+    <div style="max-width: 600px; margin: 0 auto;">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

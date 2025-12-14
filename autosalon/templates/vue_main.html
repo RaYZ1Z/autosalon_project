@@ -1,0 +1,549 @@
+{% extends "vue_main_base.html" %}
+
+{% block title %}Главная | AutoElite - Премиальные автомобили{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* === ГЕРОЙ СЕКЦИЯ === */
+    .hero-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, rgba(26, 86, 219, 0.1), rgba(59, 130, 246, 0.05));
+        border-radius: 0 0 40px 40px;
+        margin-bottom: 50px;
+    }
+
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .hero-section .lead {
+        font-size: 1.25rem;
+        color: #555;
+        margin-bottom: 30px;
+    }
+
+    .hero-image {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        border: 5px solid white;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    /* === СТАТИСТИКА === */
+    .stats {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a56db;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* === КАРТОЧКИ АВТОМОБИЛЕЙ === */
+    .cars-section {
+        padding: 80px 0;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a56db;
+        margin-bottom: 15px;
+    }
+
+    .section-title p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .car-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        margin-bottom: 30px;
+    }
+
+    .car-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    .car-image {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .car-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .car-card:hover .car-image img {
+        transform: scale(1.1);
+    }
+
+    .car-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #1a56db;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .car-content {
+        padding: 25px;
+    }
+
+    .car-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1a56db;
+        margin-bottom: 10px;
+        min-height: 60px;
+    }
+
+    .car-details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .car-price {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #10b981;
+        margin: 15px 0;
+    }
+
+    /* === ПРЕИМУЩЕСТВА === */
+    .features-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        height: 100%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #1a56db, #3b82f6);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+
+    .feature-icon i {
+        color: white;
+        font-size: 2rem;
+    }
+
+    .feature-card h5 {
+        font-weight: 600;
+        color: #1a56db;
+        margin-bottom: 15px;
+    }
+
+    .feature-card p {
+        color: #666;
+    }
+
+    /* === CTA СЕКЦИЯ === */
+    .cta-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #1a56db, #3b82f6);
+        color: white;
+        text-align: center;
+        border-radius: 40px 40px 0 0;
+        margin-top: 50px;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+
+    /* === АДАПТИВНОСТЬ === */
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 60px 0;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero-section .lead {
+            font-size: 1.1rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+        }
+
+        .stats {
+            margin-top: -30px;
+            padding: 20px;
+        }
+
+        .stat-item {
+            padding: 10px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block vue_content %}
+<div id="app">
+    <!-- === ГЕРОЙ СЕКЦИЯ === -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="text-primary">
+                        Найди свой <span style="color: #3b82f6;">идеальный</span> автомобиль
+                    </h1>
+                    <p class="lead">
+                        Более 1000 премиальных автомобилей от проверенных дилеров.
+                        Прозрачные условия, лучшие цены и гарантия качества.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center">
+                        <a href="/vue-cars/" class="btn btn-primary btn-lg">
+                            <i class="fas fa-search me-2"></i> Начать поиск
+                        </a>
+                        <a href="/about/" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-info-circle me-2"></i> О компании
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === СТАТИСТИКА === -->
+    <div class="container">
+        <div class="stats">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Автомобилей</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Брендов</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Поддержка</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === ПОПУЛЯРНЫЕ АВТОМОБИЛИ === -->
+    <section class="cars-section">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-star me-2"></i> Популярные автомобили</h2>
+                <p>Самые востребованные модели этого месяца</p>
+            </div>
+
+            <div class="row" id="popular-cars-container">
+                <!-- Сюда Vue загрузит автомобили -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Загрузка автомобилей...</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="/vue-cars/" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-arrow-right me-2"></i> Смотреть все автомобили
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- === ПРЕИМУЩЕСТВА === -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-medal me-2"></i> Почему выбирают нас</h2>
+                <p>Наши преимущества перед конкурентами</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h5>Проверенные авто</h5>
+                        <p>Все автомобили проходят тщательную проверку 150 пунктов перед продажей</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h5>Выгодные условия</h5>
+                        <p>Кредитование, трейд-ин, рассрочка от 20 банков-партнеров</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h5>Доставка по РФ</h5>
+                        <p>Быстрая доставка автомобиля в любой регион России за 3-7 дней</p>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h5>Поддержка 24/7</h5>
+                        <p>Круглосуточная поддержка по всем вопросам онлайн и по телефону</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === ПРИЗЫВ К ДЕЙСТВИЮ === -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Готовы найти свой автомобиль?</h2>
+            <p>Присоединяйтесь к тысячам довольных клиентов</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/vue-cars/" class="btn btn-light btn-lg">
+                    <i class="fas fa-search me-2"></i> Начать поиск
+                </a>
+                <a href="/register/" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-user-plus me-2"></i> Зарегистрироваться
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Подключаем Vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+
+<!-- Подключаем Axios для запросов к API -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- Упрощенное Vue приложение -->
+<script>
+console.log('Главная страница загружается...');
+
+// Простая функция для загрузки автомобилей без сложного Vue
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM загружен, начинаю загрузку автомобилей...');
+
+    const container = document.getElementById('popular-cars-container');
+    if (!container) {
+        console.error('Контейнер для автомобилей не найден');
+        return;
+    }
+
+    // Пытаемся загрузить с API
+    axios.get('/api/cars/')
+        .then(response => {
+            console.log('API ответ получен:', response.data.length, 'автомобилей');
+            renderCars(response.data.slice(0, 6));
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки с API:', error);
+            // Используем демо-данные
+            const demoCars = getDemoCars();
+            renderCars(demoCars);
+        });
+
+    // Функция для отрисовки автомобилей
+    function renderCars(cars) {
+        if (cars.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center">
+                    <i class="fas fa-car fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Автомобили не найдены</h5>
+                    <p class="text-muted">Попробуйте позже</p>
+                </div>
+            `;
+            return;
+        }
+
+        const carsHTML = cars.map(car => {
+            const brand = car.brand?.name || car.brand || '';
+            const carName = `${brand} ${car.model}`;
+            const price = new Intl.NumberFormat('ru-RU').format(car.price);
+            const mileage = new Intl.NumberFormat('ru-RU').format(car.mileage);
+            const imageUrl = car.image_url || (car.images && car.images.length > 0 ? car.images[0].image : null);
+
+            return `
+                <div class="col-md-4">
+                    <div class="car-card">
+                        <div class="car-image position-relative">
+                            ${imageUrl ? `<img src="${imageUrl}" alt="${carName}" class="w-100 h-100" style="object-fit: cover;">` : `
+                            <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                <div class="text-center">
+                                    <i class="fas fa-car text-muted" style="font-size: 3rem;"></i>
+                                    <p class="text-muted mt-2 small">Фото скоро</p>
+                                </div>
+                            </div>
+                            `}
+                            <div class="car-badge">${car.year} год</div>
+                        </div>
+                        <div class="car-content">
+                            <h5 class="car-title">${carName}</h5>
+                            <div class="car-details">
+                                <span>${mileage} км</span>
+                                <span>${car.color}</span>
+                            </div>
+                            <div class="car-price">${price} ₽</div>
+                            <a href="/car/${car.id}/" class="btn btn-primary w-100">
+                                <i class="fas fa-eye me-2"></i> Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = carsHTML;
+        console.log('Автомобили отрисованы:', cars.length, 'шт.');
+    }
+
+    // Демо-данные
+    function getDemoCars() {
+        return [
+            {
+                id: 1,
+                brand: { name: 'Mercedes-Benz' },
+                model: 'E-Class',
+                year: 2023,
+                price: 6500000,
+                mileage: 5000,
+                color: 'Черный',
+                fuel_type: 'petrol',
+                transmission: 'automatic'
+            },
+            {
+                id: 2,
+                brand: { name: 'BMW' },
+                model: 'X5',
+                year: 2022,
+                price: 7200000,
+                mileage: 15000,
+                color: 'Белый',
+                fuel_type: 'diesel',
+                transmission: 'automatic'
+            },
+            {
+                id: 3,
+                brand: { name: 'Audi' },
+                model: 'Q7',
+                year: 2023,
+                price: 5800000,
+                mileage: 8000,
+                color: 'Серый',
+                fuel_type: 'diesel',
+                transmission: 'automatic'
+            }
+        ];
+    }
+
+    // Делаем кнопки навигации активными
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "vue_main_base.html" %}
+
+{% block title %}О нас | AutoElite{% endblock %}
+
+{% block vue_content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="glass-effect p-5 rounded-4">
+                <h1 class="text-primary mb-4">
+                    <i class="fas fa-info-circle me-2"></i> О компании AutoElite
+                </h1>
+                
+                <div class="mb-4">
+                    <h3 class="text-primary mb-3">Наша миссия</h3>
+                    <p class="lead">
+                        Мы помогаем людям находить идеальные автомобили, соответствующие их потребностям и бюджету.
+                    </p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-primary mb-3">Наша история</h3>
+                    <p>
+                        AutoElite была основана в 2010 году с целью создания прозрачного рынка подержанных автомобилей. 
+                        За 13 лет мы помогли более 50 000 клиентов найти свои идеальные автомобили.
+                    </p>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-primary mb-3">Наши ценности</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Прозрачность сделок</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Честность в оценке</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Качество обслуживания</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Гарантия на все автомобили</li>
+                    </ul>
+                </div>
+                
+                <div class="text-center mt-5">
+                    <a href="/vue-main/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i> На главную
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

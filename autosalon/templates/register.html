@@ -1,0 +1,85 @@
+{% extends "vue_main_base.html" %}
+
+{% block title %}Регистрация | AutoElite{% endblock %}
+
+{% block vue_content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="glass-effect p-5 rounded-4">
+                <h1 class="text-primary text-center mb-4">
+                    <i class="fas fa-user-plus me-2"></i> Регистрация
+                </h1>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Регистрация пользователей будет доступна в следующем обновлении.
+                </div>
+                
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="name" 
+                               placeholder="Введите ваше имя">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" 
+                               placeholder="example@mail.ru">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Телефон</label>
+                        <input type="tel" class="form-control" id="phone" 
+                               placeholder="+7 (999) 123-45-67">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="password" 
+                               placeholder="Придумайте пароль">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Подтверждение пароля</label>
+                        <input type="password" class="form-control" id="confirmPassword" 
+                               placeholder="Повторите пароль">
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary w-100 mb-3" onclick="demoRegister()">
+                        <i class="fas fa-user-plus me-2"></i> Демо-регистрация
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-muted">
+                            Нажимая кнопку, вы соглашаетесь с 
+                            <a href="#" class="text-decoration-none">правилами обработки данных</a>
+                        </p>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="text-muted">Уже есть аккаунт?</p>
+                    <a href="/login/" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i> Войти
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function demoRegister() {
+    const name = document.getElementById('name').value || 'Демо Пользователь';
+    const email = document.getElementById('email').value || 'demo@autoelite.ru';
+    const phone = document.getElementById('phone').value || '+7 (999) 123-45-67';
+
+    // Перенаправляем в личный кабинет
+    window.location.href = '/accounts/profile/';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends "vue_main_base.html" %}
+
+{% block title %}Детали автомобиля | AutoElite{% endblock %}
+
+{% block extra_css %}
+<style>
+    .car-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 100px 20px 50px;
+    }
+
+    .car-detail-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .car-detail-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a56db;
+        margin-bottom: 10px;
+    }
+
+    .car-detail-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+
+    .car-images {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .car-main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+
+    .car-info {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .car-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #10b981;
+        margin-bottom: 20px;
+    }
+
+    .car-details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .detail-item i {
+        color: #3b82f6;
+        width: 20px;
+    }
+
+    .car-description {
+        background: #f8fafc;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .car-description h3 {
+        color: #1a56db;
+        margin-bottom: 15px;
+    }
+
+    .car-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .btn-primary, .btn-success {
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover, .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .car-detail-content {
+            grid-template-columns: 1fr;
+        }
+
+        .car-detail-header h1 {
+            font-size: 2rem;
+        }
+
+        .car-price {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block vue_content %}
+<div class="car-detail-container">
+    <div class="car-detail-header">
+        <h1>{{ car.brand }} {{ car.model }}</h1>
+        <p class="text-muted">Детальная информация об автомобиле</p>
+    </div>
+
+    <div class="car-detail-content">
+        <!-- Изображения -->
+        <div class="car-images">
+            {% if car.main_image %}
+            <img src="{{ car.main_image }}"
+                 alt="{{ car.brand }} {{ car.model }}"
+                 class="car-main-image">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                 alt="{{ car.brand }} {{ car.model }}"
+                 class="car-main-image">
+            {% endif %}
+            <p class="text-center text-muted">Основное изображение автомобиля</p>
+        </div>
+
+        <!-- Информация -->
+        <div class="car-info">
+            <div class="car-price">{{ car.price|floatformat:0|intcomma }} ₽</div>
+
+            <div class="car-details-grid">
+                <div class="detail-item">
+                    <i class="fas fa-calendar"></i>
+                    <span><strong>Год выпуска:</strong> {{ car.year }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-road"></i>
+                    <span><strong>Пробег:</strong> {{ car.mileage|floatformat:0|intcomma }} км</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-gas-pump"></i>
+                    <span><strong>Топливо:</strong> {{ car.fuel_type }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-cogs"></i>
+                    <span><strong>Коробка:</strong> {{ car.transmission }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-palette"></i>
+                    <span><strong>Цвет:</strong> {{ car.color }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span><strong>Объем двигателя:</strong> {{ car.engine_volume }} л</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-horse"></i>
+                    <span><strong>Мощность:</strong> {{ car.horsepower }} л.с.</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <span><strong>Добавлен:</strong> {{ car.created_at|date:"d.m.Y" }}</span>
+                </div>
+            </div>
+
+            {% if car.description %}
+            <div class="car-description">
+                <h3><i class="fas fa-info-circle me-2"></i>Описание</h3>
+                <p>{{ car.description }}</p>
+            </div>
+            {% endif %}
+
+            <div class="car-actions">
+                <a href="/vue-cars/" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Назад к каталогу
+                </a>
+                <a href="/vue-cars/" class="btn btn-success" onclick="alert('Заявка на автомобиль отправлена! Мы свяжемся с вами в ближайшее время.'); return false;">
+                    <i class="fas fa-shopping-cart"></i> Оставить заявку
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Добавляем автомобиль в историю просмотров
+    if (window.userStorage) {
+        window.userStorage.addToHistory({
+            id: {{ car.id }},
+            brand_name: '{{ car.brand }}',
+            model: '{{ car.model }}',
+            year: {{ car.year }},
+            price: {{ car.price }},
+            image_url: '{{ car.main_image|default:"https://images.unsplash.com/photo-1549399542-7e3f8b79c341" }}'
+        });
+    }
+</script>
+{% endblock %}

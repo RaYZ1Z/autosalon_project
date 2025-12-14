@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 class Brand(models.Model):
     """Модель для марок автомобилей"""
     name = models.CharField(max_length=100, verbose_name="Название марки")
@@ -12,7 +10,7 @@ class Brand(models.Model):
     class Meta:
         verbose_name = "Марка автомобиля"
         verbose_name_plural = "Марки автомобилей"
-        ordering = ['name']  # сортировка по названию
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -21,7 +19,6 @@ class Brand(models.Model):
 class Car(models.Model):
     """Модель для автомобилей"""
 
-    # Типы коробки передач
     TRANSMISSION_CHOICES = [
         ('manual', 'Механическая'),
         ('automatic', 'Автоматическая'),
@@ -29,7 +26,6 @@ class Car(models.Model):
         ('variator', 'Вариатор'),
     ]
 
-    # Типы топлива
     FUEL_CHOICES = [
         ('petrol', 'Бензин'),
         ('diesel', 'Дизель'),
@@ -41,7 +37,7 @@ class Car(models.Model):
         Brand,
         on_delete=models.CASCADE,
         verbose_name="Марка",
-        related_name='cars_image'
+        related_name='cars'  # <-- ИСПРАВЛЕНО: 'cars' вместо 'cars_image'
     )
     model = models.CharField(max_length=100, verbose_name="Модель")
     year = models.IntegerField(verbose_name="Год выпуска")
@@ -71,7 +67,7 @@ class Car(models.Model):
     class Meta:
         verbose_name = "Автомобиль"
         verbose_name_plural = "Автомобили"
-        ordering = ['-created_at']  # новые сверху
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.brand.name} {self.model} ({self.year})"
@@ -110,3 +106,100 @@ class CarImage(models.Model):
 
     def __str__(self):
         return f"Фото {self.car.brand.name} {self.car.model}"
+
+
+class Favorite(models.Model):
+    """Модель избранных автомобилей пользователя"""
+    user = models.ForeignKey(
+        'accounts.CustomUser',
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='Пользователь'
+    )
+    car = models.ForeignKey(
+        Car,
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='Автомобиль'
+    )
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
+
+    class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
+        ordering = ['-added_at']
+        unique_together = ['user', 'car']  # Один пользователь может добавить авто в избранное только один раз
+
+    def __str__(self):
+        return f"{self.user.username} - {self.car}"
+
+
+class PurchaseRequest(models.Model):
+    """Модель заявки на покупку автомобиля"""
+
+    STATUS_CHOICES = (
+        ('new', 'Новая'),
+        ('in_progress', 'В обработке'),
+        ('approved', 'Одобрена'),
+        ('rejected', 'Отклонена'),
+        ('completed', 'Завершена'),
+    )
+
+    # Связь с пользователем (кто оставил заявку)
+    user = models.ForeignKey(
+        'accounts.CustomUser',  # Используем строку чтобы избежать циклических импортов
+        on_delete=models.CASCADE,
+        related_name='purchase_requests',
+        verbose_name='Пользователь'
+    )
+
+    # Связь с автомобилем
+    car = models.ForeignKey(
+        Car,
+        on_delete=models.CASCADE,
+        related_name='purchase_requests',
+        verbose_name='Автомобиль'
+    )
+
+    # Контактные данные (дублируем на случай если пользователь их изменит)
+    contact_name = models.CharField(max_length=100, verbose_name='Имя')
+    contact_phone = models.CharField(max_length=20, verbose_name='Телефон')
+    contact_email = models.EmailField(verbose_name='Email')
+
+    # Сообщение от пользователя
+    message = models.TextField(blank=True, verbose_name='Сообщение')
+
+    # Статус заявки
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='new',
+        verbose_name='Статус'
+    )
+
+    # Комментарий менеджера
+    manager_comment = models.TextField(blank=True, verbose_name='Комментарий менеджера')
+
+    # Даты
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+
+    class Meta:
+        verbose_name = 'Заявка на покупку'
+        verbose_name_plural = 'Заявки на покупку'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['user', 'created_at']),
+        ]
+
+    def __str__(self):
+        return f"Заявка #{self.id} на {self.car} от {self.contact_name}"
+
+    def can_be_edited_by_user(self, user):
+        """Может ли пользователь редактировать заявку"""
+        return user == self.user and self.status in ['new', 'in_progress']
+
+    def can_be_processed_by_user(self, user):
+        """Может ли пользователь обрабатывать заявку (менеджер/админ)"""
+        return user.is_manager() and self.status != 'completed'
